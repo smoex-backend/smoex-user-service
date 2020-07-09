@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smoex.service.user.mapper.UserMapper">
+	<cache readOnly="true" eviction="FIFO" flushInterval="60000" />
+
+	<!-- Result Map -->
+	<resultMap id="UserMap" type="UserEntity">
+		<id column="id" property="id" />
+		<result column="phone" property="phone" />
+		<result column="email" property="email" />
+		<result column="password" property="password" />
+		<result column="access_token" property="token" />
+		<result column="nickname" property="nickname" />
+		<result column="avatar" property="avatar" />
+	</resultMap>
+
+	<sql id="Select_User_Column">
+		SELECT
+        <trim suffixOverrides=",">
+            `id`,
+            `phone`,
+            `email`,
+            `nickname`,
+            `avatar`,
+            `password`,
+            `access_token`,
+            `username`,
+        </trim>
+        FROM `user`
+	</sql>
+    <sql id="Select_User_Where">
+        <where>
+            <if test="phone != null" >AND `phone` = #{phone}</if>
+            <if test="email != null" >AND `email` = #{email}</if>
+            <if test="username != null" >AND `username` = #{username}</if>
+            <if test="token != null" >AND `access_token` = #{token}</if>
+            <if test="password != null" >AND `password` = #{password}</if>
+        </where>
+    </sql>
+
+    <select id="selectById" parameterType="int" resultMap="UserMap">
+        <include refid="Select_User_Column" />
+        WHERE `id` = #{id}
+    </select>
+
+    <select id="selectByWhere" parameterType="map" resultMap="UserMap">
+        <include refid="Select_User_Column" />
+        <include refid="Select_User_Where" />
+        LIMIT 1
+    </select>
+
+    <select id="findByWhere" parameterType="map" resultMap="UserMap">
+        <include refid="Select_User_Column" />
+        <include refid="Select_User_Where" />
+    </select>
+
+	<insert id="insert" parameterType="UserEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `user`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="phone != null" >`phone`,</if>
+            <if test="email != null" >`email`,</if>
+            `nickname`,
+            `password`,
+            `create_time`,
+            `update_time`,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="phone != null" >#{phone},</if>
+            <if test="email != null" >#{email},</if>
+            #{nickname},
+            #{password},
+            now(),
+            now(),
+        </trim>
+	</insert>
+
+    <update id="update" parameterType="UserEntity">
+        UPDATE `user`
+        <set>
+            <if test="phone != null">`phone` = #{phone},</if>
+            <if test="email != null">`email` = #{email},</if>
+            <if test="password != null" >`password` = #{password},</if>
+            <if test="username != null" >`username` = #{username},</if>
+            <if test="nickname != null" >`nickname` = #{nickname},</if>
+            <if test="avatar != null" >`avatar` = #{avatar},</if>
+            `update_time` = now(),
+        </set>
+        WHERE `id` = #{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM `user`
+        WHERE `id` = #{id}
+    </delete>
+
+</mapper>   

@@ -1,0 +1,42 @@
+
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev
+  main:
+      allow-bean-definition-overriding: true # TODO: 不知道为什么要加这个
+  datasource:
+      name: smoex
+      url: jdbc:mysql://rm-bp1h49vw0j0t97lt6ro.mysql.rds.aliyuncs.com:3306/db_smoex?allowMultiQueries=true&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&ssl=false
+      username: root
+      password: Gly523704
+      driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    # Redis数据库索引（默认为0）
+    database: 0
+    host: smoexredispublic.redis.rds.aliyuncs.com
+    port: 6379
+    timeout: 300ms
+    password: Gly523704
+
+logging:
+  level:
+    com:
+     smoex:
+       service:
+         user:
+           mapper: debug
+
+mybatis:
+    mapper-locations: classpath:mybatis/mapper/*.xml
+    config-location: classpath:mybatis/mybatis-config.xml  #注意：一定要对应mapper映射xml文件的所在路径
+
+
+##pagehelper分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
